@@ -1,8 +1,14 @@
 from tkinter import *
+from tkinter import messagebox
 from ctypes import windll
 import os
 import shutil
-
+import subprocess
+import re
+import platform
+import wmi
+import psutil
+import GPUtil
 
 ################### title bar ###################
 
@@ -15,6 +21,7 @@ root.geometry('900x600+75+75') # set new geometry the + 75 + 75 is where it star
 #root.iconbitmap("your_icon.ico") # to show your own icon 
 root.minimized = False # only to know if root is minimized
 root.maximized = False # only to know if root is maximized
+
 
 LGRAY = '#3e4042' # button color effects in the title bar (Hex color)
 DGRAY = '#25292e' # window background color               (Hex color)
@@ -223,12 +230,14 @@ category_menu_frame.pack(side=LEFT, fill=Y)
 # Przykładowe przyciski kategorii (możesz dostosować do własnych potrzeb)
 category_button1 = Button(category_menu_frame, text='Home Page', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button2 = Button(category_menu_frame, text='Optimization', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
-category_button3 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button3 = Button(category_menu_frame, text='Pc Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button4 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 
 # Przypnij przyciski do Frame
 category_button1.pack(side=TOP, fill=X, pady=2)  # Dodaj trochę większy odstęp od góry i dołu
 category_button2.pack(side=TOP, fill=X, pady=2)
 category_button3.pack(side=TOP, fill=X, pady=2)
+category_button4.pack(side=TOP, fill=X, pady=2)
 
 # Efekty podświetlania przycisków po najechaniu myszką
 def on_enter(event):
@@ -244,6 +253,8 @@ category_button2.bind('<Enter>', on_enter)
 category_button2.bind('<Leave>', on_leave)
 category_button3.bind('<Enter>', on_enter)
 category_button3.bind('<Leave>', on_leave)
+category_button4.bind('<Enter>', on_enter)
+category_button4.bind('<Leave>', on_leave)
 
 # Function to switch between categories
 def switch_category(category_frame):
@@ -268,13 +279,28 @@ def switch_category(category_frame):
 ############ Category 1 ############
 def display_category1():
     category_frame = Frame(window, bg=DGRAY)
-    label = Label(category_frame, text='Home Page', font=("calibri", 16), bg=DGRAY, fg='white')
-    label.pack(pady=20)
+
+    # Dodajemy zdjęcie
+    image = PhotoImage(file="BigImage.png")
+    image_label = Label(category_frame, image=image, bg=DGRAY)
+    image_label.image = image  # Zapobiega usuwaniu obrazu przez garbage collector
+    image_label.pack(pady=20)
+
+    # Dodajemy etykietę tekstu
+    label = Label(category_frame, text='Welcome!', font=("calibri", 22, "bold"), bg=DGRAY, fg='white')
+    label.pack(pady=00)
+
     return category_frame
 
 
 
 ############ Category 2 ############
+def show_notification(message):
+    root = Tk()
+    root.withdraw()
+    messagebox.showinfo("Notification", message)
+    root.destroy()
+
 def clear_temp():
     try:
         # Ścieżka do folderu temp (dla systemu Windows)
@@ -294,7 +320,7 @@ def clear_temp():
             except Exception as e:
                 print(f"Nie udało się usunąć pliku/folderu: {e}")
 
-        print("Folder temp został wyczyszczony.")
+        show_notification(f"Folder {temp_folder_path} has been cleared successfully.")
     except Exception as e:
         print(f"Błąd podczas czyszczenia folderu temp: {e}")
 
@@ -317,35 +343,102 @@ def clear_temp2():
             except Exception as e:
                 print(f"Nie udało się usunąć pliku/folderu: {e}")
 
-        print("Folder temp w katalogu Windows został wyczyszczony.")
+        show_notification(f"Folder {temp_folder_path} has been cleared successfully.")
     except Exception as e:
         print(f"Błąd podczas czyszczenia folderu temp w katalogu Windows: {e}")
+
+def ultimate_power():
+    # Run powercfg command to set the power plan to "Ultimate Performance"
+    command = "powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61"
+    try:
+        subprocess.run(command, shell=True, check=True)
+        show_notification(f'Power plan "Ultimate Performance" added successfully')
+    except subprocess.CalledProcessError as e:
+        print(f"Error setting power plan to Ultimate Performance: {e}")
+
+def open_power_settings():
+    try:
+        subprocess.run(["control", "powercfg.cpl"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
 
 
 def display_category2():
     category_frame = Frame(window, bg=DGRAY)
     category_frame.pack()
 
-    ## ITEM1
+    # ITEM1
     label = Label(category_frame, text='Clean the APPDATA TEMP folder', font=("calibri", 16), bg=DGRAY, fg='white')
-    label.grid(row=0, column=0, pady=10, padx=(10, 10), sticky="w")  # Align label to the left with 10px margin on both sides
-    proceed_button = Button(category_frame, text='PROCEED', command=clear_temp, font=("calibri", 12), bg=RGRAY, fg='white')
-    proceed_button.grid(row=0, column=2, pady=10, padx=20, sticky="e")  # Align button to the right with 20px padding
+    label.grid(row=0, column=0, pady=10, padx=(10, 10), sticky="w")
 
-    ## ITEM2
+    proceed_button = Button(category_frame, text='PROCEED', command=clear_temp, font=("calibri", 12),
+                            bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button.grid(row=0, column=2, pady=10, padx=20, sticky="e")
+    proceed_button.bind("<Enter>", on_enter)
+    proceed_button.bind("<Leave>", on_leave)
+
+    # ITEM2
     label2 = Label(category_frame, text='Clean the TEMP folder', font=("calibri", 16), bg=DGRAY, fg='white')
-    label2.grid(row=1, column=0, pady=10, padx=(10, 10), sticky="w")  # Align label to the left with 10px margin on both sides
-    proceed_button2 = Button(category_frame, text='PROCEED', command=clear_temp2, font=("calibri", 12), bg=RGRAY, fg='white')
-    proceed_button2.grid(row=1, column=2, pady=10, padx=20, sticky="e")  # Align button to the right with 20px padding
-    
+    label2.grid(row=1, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button2 = Button(category_frame, text='PROCEED', command=clear_temp2, font=("calibri", 12),
+                             bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button2.grid(row=1, column=2, pady=10, padx=20, sticky="e")
+    proceed_button2.bind("<Enter>", on_enter)
+    proceed_button2.bind("<Leave>", on_leave)
+
+    # ITEM3
+    label3 = Label(category_frame, text='Add "Ultimate Performance" power plan', font=("calibri", 16), bg=DGRAY, fg='white')
+    label3.grid(row=2, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button3 = Button(category_frame, text='PROCEED', command=ultimate_power, font=("calibri", 12),
+                             bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button3.grid(row=2, column=2, pady=10, padx=20, sticky="e")
+    proceed_button3.bind("<Enter>", on_enter)
+    proceed_button3.bind("<Leave>", on_leave)
+
+    # ITEM4
+    label4 = Label(category_frame, text='Open power plan settings', font=("calibri", 16), bg=DGRAY, fg='white')
+    label4.grid(row=3, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button4 = Button(category_frame, text='PROCEED', command=open_power_settings, font=("calibri", 12),
+                             bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button4.grid(row=3, column=2, pady=10, padx=20, sticky="e")
+    proceed_button4.bind("<Enter>", on_enter)
+    proceed_button4.bind("<Leave>", on_leave)
+
     return category_frame
-
-
 
 ############ Category 3 ############
 def display_category3():
     category_frame = Frame(window, bg=DGRAY)
-    label = Label(category_frame, text='GhostOptimizer\n\nDeveloped by Duchnes\nGitHub: https://github.com/Duchnes\nCountry: Poland\n\nSpecial thanks to the open-source community for their invaluable contributions.\n\n© 2024 GhostOptimizer. All rights reserved.', font=("calibri", 10), bg=DGRAY, fg='white')
+    pc = wmi.WMI()
+    info = f"=========================== OS =========================== \n\n \
+    Name: {platform.platform()}\n \
+    Version: {platform.node()}\n \
+    User Name: {platform.node()}\n\n \
+    =========================== CPU =========================== \n\n \
+    Name: {pc.Win32_Processor()[0].name}\n \
+    Psyhical Cores: {psutil.cpu_count(logical=False)}\n \
+    Total Cores: {psutil.cpu_count(logical=True)}\n\n \
+    =========================== GPU =========================== \n\n \
+    Name: {pc.Win32_VideoController()[0].name}\n\n \
+    =========================== MEMORY =========================== \n\n \
+    Total: {psutil.virtual_memory().total / 1024 / 1024 / 1024:.2f} GB\n \
+    Used: {psutil.virtual_memory().used / 1024 / 1024 / 1024:.2f} GB\n \
+    Avaiable: {psutil.virtual_memory().available / 1024 / 1024 / 1024:.2f} GB\n \
+    "
+    label1 = Label(category_frame, text="Your PC", font=("comfortaa", 40, "bold"), bg=DGRAY, fg='white', anchor="w")
+    label = Label(category_frame, text=info, font=("calibri", 13, "bold"), bg=DGRAY, fg='white', anchor="w")
+    label.pack(pady=20)
+    label1.pack(side='top', anchor=CENTER, pady=10)
+    label.pack(side='bottom', anchor=CENTER, pady=10)
+    return category_frame
+
+############ Category 4 ############
+def display_category4():
+    category_frame = Frame(window, bg=DGRAY)
+    label = Label(category_frame, text='\n\n\n\n\n\n\n\n\n\n\n\n\nGhostOptimizer\n\nDeveloped by Duchnes\nGitHub: https://github.com/Duchnes\nCountry: Poland\n\nSpecial thanks to the open-source community for their invaluable contributions.\n\n© 2024 GhostOptimizer - All rights reserved.', font=("calibri", 10, "bold"), bg=DGRAY, fg='white', anchor="w")
     label.pack(pady=20)
     label.pack(side='top', anchor=CENTER, pady=10)
     return category_frame
@@ -362,6 +455,7 @@ def display_category3():
 category_button1.configure(command=lambda: switch_category(display_category1))
 category_button2.configure(command=lambda: switch_category(display_category2))
 category_button3.configure(command=lambda: switch_category(display_category3))
+category_button4.configure(command=lambda: switch_category(display_category4))
 
 # Display the initial category
 switch_category(display_category1)
