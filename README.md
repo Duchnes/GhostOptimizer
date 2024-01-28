@@ -12,6 +12,11 @@ the project is currently being developed.
   - Clear **appdata temp** folder
   - Add **ultimate performance** power plan
   - Open **power plan options**
+- Advanced system optimization
+  - Disable telemetry
+  - Disable "Windows Hello"
+  - Remove maps
+  - Remove OneDrive
 - Show System info
 
 ## Supported Platforms
