@@ -13,11 +13,18 @@ the project is currently being developed.
   - Add **ultimate performance** power plan
   - Open **power plan options**
 - Advanced system optimization
-  - Disable telemetry
-  - Disable "Windows Hello"
-  - Remove maps
-  - Remove OneDrive
+  - Disable **telemetry**
+  - Disable **"Windows Hello"**
+  - Remove **maps**
+  - Remove **OneDrive**
+  - Disable **Cortana**
+  - Disable **Windows Error Reporting**
+  - Disable **Setting Sync**
+  - Disable **Windows Get Help**
+  - Disable **Microsoft-PPIProjection-Package**
+  - Disable **Paint 3D Print**
 - Show System info
+- License System
 
 ## Supported Platforms
 We are currently supporting Windows 10 and Windows 11. We didn't tested our tool on other platforms.
