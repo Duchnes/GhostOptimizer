@@ -240,6 +240,7 @@ category_button1.pack(side=TOP, fill=X, pady=2)  # Dodaj trochę większy odstę
 category_button2.pack(side=TOP, fill=X, pady=2)
 category_button3.pack(side=TOP, fill=X, pady=2)
 category_button4.pack(side=TOP, fill=X, pady=2)
+category_button5.pack(side=TOP, fill=X, pady=2)
 
 # Efekty podświetlania przycisków po najechaniu myszką
 def on_enter(event):
@@ -257,6 +258,8 @@ category_button3.bind('<Enter>', on_enter)
 category_button3.bind('<Leave>', on_leave)
 category_button4.bind('<Enter>', on_enter)
 category_button4.bind('<Leave>', on_leave)
+category_button5.bind('<Enter>', on_enter)
+category_button5.bind('<Leave>', on_leave)
 
 # Function to switch between categories
 def switch_category(category_frame):
@@ -461,7 +464,8 @@ def telemetry_off():
     ]
 
     for command in commands:
-        subprocess.run(command, shell=True)        
+        subprocess.run(command, shell=True)      
+    show_notification(f'Telemetry has been disabled successfully')  
 
 def windows_hello():
     commands = [
@@ -469,7 +473,8 @@ def windows_hello():
     ]
 
     for command in commands:
-        subprocess.run(command, shell=True)        
+        subprocess.run(command, shell=True)
+    show_notification(f'Windows Hello has been disabled successfully')          
     
 def disable_maps_tasks():
     commands = [
@@ -481,6 +486,7 @@ def disable_maps_tasks():
 
     for command in commands:
         subprocess.run(command, shell=True)
+    show_notification(f'Maps has been removed successfully')  
 
 def uninstall_onedrive():
     commands = [
@@ -494,6 +500,39 @@ def uninstall_onedrive():
 
     for command in commands:
         subprocess.run(command, shell=True)
+    show_notification(f'OneDrive has been uninstalled successfully')  
+
+def disable_cortana_and_bing_search():
+    commands = [
+        'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search" /v AllowCortana /t REG_DWORD /d 0 /f',
+        'reg add "HKLM\\SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\FirewallRules" /v "{2765E0F4-2918-4A46-B9C9-43CDD8FCBA2B}" /t REG_SZ /d "BlockCortana|Action=Block|Active=TRUE|Dir=Out|App=C:\\windows\\systemapps\\microsoft.windows.cortana_cw5n1h2txyewy\\searchui.exe|Name=Search and Cortana application|AppPkgId=S-1-15-2-1861897761-1695161497-2927542615-642690995-327840285-2659745135-2630312742|" /f',
+        'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Search" /v BingSearchEnabled /t REG_DWORD /d 0 /f'
+    ]
+
+    for command in commands:
+        subprocess.run(command, shell=True)
+
+def disable_windows_error_reporting():
+    commands = [
+        'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f',
+        'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f'
+    ]
+
+    for command in commands:
+        subprocess.run(command, shell=True)
+
+def disable_setting_sync():
+    commands = [
+        'reg add "HKLM\\Software\\Policies\\Microsoft\\Windows\\SettingSync" /v DisableSettingSync /t REG_DWORD /d 2 /f',
+        'reg add "HKLM\\Software\\Policies\\Microsoft\\Windows\\SettingSync" /v DisableSettingSyncUserOverride /t REG_DWORD /d 1 /f'
+    ]
+
+    for command in commands:
+        subprocess.run(command, shell=True)
+
+def install_wim_tweak_command():
+    command = 'install_wim_tweak.exe /o /c Microsoft-Windows-ContactSupport /r'
+    subprocess.run(command, shell=True)
 
 
 def display_category3():
@@ -536,6 +575,51 @@ def display_category3():
     proceed_button4.bind("<Enter>", on_enter)
     proceed_button4.bind("<Leave>", on_leave)
 
+    # ITEM5
+    label5 = Label(category_frame, text='Disable Cortana', font=("calibri", 16), bg=DGRAY, fg='white')
+    label5.grid(row=4, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button5 = Button(category_frame, text='PROCEED', command=disable_cortana_and_bing_search, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button5.grid(row=4, column=2, pady=10, padx=20, sticky="e")
+    proceed_button5.bind("<Enter>", on_enter)
+    proceed_button5.bind("<Leave>", on_leave)
+
+    # ITEM6
+    label6 = Label(category_frame, text='Disable Windows Error Reporting', font=("calibri", 16), bg=DGRAY, fg='white')
+    label6.grid(row=5, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button6 = Button(category_frame, text='PROCEED', command=disable_windows_error_reporting, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button6.grid(row=5, column=2, pady=10, padx=20, sticky="e")
+    proceed_button6.bind("<Enter>", on_enter)
+    proceed_button6.bind("<Leave>", on_leave)
+
+    # ITEM7
+    label7 = Label(category_frame, text='Disable Settings Sync', font=("calibri", 16), bg=DGRAY, fg='white')
+    label7.grid(row=6, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button7 = Button(category_frame, text='PROCEED', command=disable_setting_sync, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button7.grid(row=6, column=2, pady=10, padx=20, sticky="e")
+    proceed_button7.bind("<Enter>", on_enter)
+    proceed_button7.bind("<Leave>", on_leave)
+
+    # ITEM8
+    label8 = Label(category_frame, text='Disable Windows Get Help', font=("calibri", 16), bg=DGRAY, fg='white')
+    label8.grid(row=7, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button8 = Button(category_frame, text='PROCEED', command=install_wim_tweak_command, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button8.grid(row=7, column=2, pady=10, padx=20, sticky="e")
+    proceed_button8.bind("<Enter>", on_enter)
+    proceed_button8.bind("<Leave>", on_leave)
+
+    # ITEM9
+    label9 = Label(category_frame, text='Disable Windows Get Help', font=("calibri", 16), bg=DGRAY, fg='white')
+    label9.grid(row=8, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button9 = Button(category_frame, text='PROCEED', command=install_wim_tweak_command, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button9.grid(row=8, column=2, pady=10, padx=20, sticky="e")
+    proceed_button9.bind("<Enter>", on_enter)
+    proceed_button9.bind("<Leave>", on_leave)
+
     return category_frame
 
 ############ Category 4 ############
@@ -544,7 +628,7 @@ def display_category4():
     pc = wmi.WMI()
     info = f"=========================== OS =========================== \n\n \
     Name: {platform.platform()}\n \
-    Version: {platform.node()}\n \
+    Version: {platform.version()}\n \
     User Name: {platform.node()}\n\n \
     =========================== CPU =========================== \n\n \
     Name: {pc.Win32_Processor()[0].name}\n \
