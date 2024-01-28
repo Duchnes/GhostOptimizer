@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
 from ctypes import windll
+from licensing.models import *
+from licensing.methods import Key, Helpers
 import os
 import shutil
 import subprocess
@@ -236,7 +238,8 @@ category_button1 = Button(category_menu_frame, text='Home Page', bg=RGRAY, padx=
 category_button2 = Button(category_menu_frame, text='Optimization', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button3 = Button(category_menu_frame, text='Optimization [PRO]', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button4 = Button(category_menu_frame, text='Pc Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
-category_button5 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button5 = Button(category_menu_frame, text='License Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button6 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 
 # Przypnij przyciski do Frame
 category_button1.pack(side=TOP, fill=X, pady=2)  # Dodaj trochę większy odstęp od góry i dołu
@@ -244,6 +247,7 @@ category_button2.pack(side=TOP, fill=X, pady=2)
 category_button3.pack(side=TOP, fill=X, pady=2)
 category_button4.pack(side=TOP, fill=X, pady=2)
 category_button5.pack(side=TOP, fill=X, pady=2)
+category_button6.pack(side=TOP, fill=X, pady=2)
 
 # Efekty podświetlania przycisków po najechaniu myszką
 def on_enter(event):
@@ -263,6 +267,8 @@ category_button4.bind('<Enter>', on_enter)
 category_button4.bind('<Leave>', on_leave)
 category_button5.bind('<Enter>', on_enter)
 category_button5.bind('<Leave>', on_leave)
+category_button6.bind('<Enter>', on_enter)
+category_button6.bind('<Leave>', on_leave)
 
 # Function to switch between categories
 def switch_category(category_frame):
@@ -684,8 +690,43 @@ def display_category4():
     label.pack(side='bottom', anchor=CENTER, pady=10)
     return category_frame
 
+
 ############ Category 5 ############
 def display_category5():
+    RSAPubKey = "<RSAKeyValue><Modulus>i5XW4q7h+JbUPcf5XQo/KCEs/OqJmchV+/vC4i4wFD8tnaAqxuxRn3Qjnng7SsiPzDP6CPYp9KQuQ1JrfqhNphuzJUpHAkkmkAzd7fGvMiylVIrr2+yTXE9OrGNC7QANoppxDAVgIkEP4P5m6fa2kPzXYXfmrlautdxZhR1oAA0Tj3H0oHl31PI+hvjJxvFOEaJRWupAzpujsQ0Dq2OfTFhMJwt+a8U90aZHzvJ8pKE30EhmLRjoVS+wZV/xtxqmGYcFJvjkGi2xYeDerfxL1a9yyKm27zK/I5vimKLsl/l4jcsbZVA1dW7FkJBqMcVXxWB2D1UgsAbnGHgHw1P9iQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>"
+    auth = "WyI3MzAzNjE4NCIsIk9QRjZCMHhxNGxTUkkwSzZwajFNOFppMU9xQ2hpTlZsbzR3YlRsdE0iXQ=="
+
+    try:
+        with open("data.pkl", "rb") as file:
+            data = pickle.load(file)
+            text_entry = data.get("text", "")
+    except FileNotFoundError:
+        pass
+
+    result = Key.activate(token=auth,\
+                       rsa_pub_key=RSAPubKey,\
+                       product_id=23761, \
+                       key=text_entry,  # Using the key entered in the text entry
+                       machine_code=Helpers.GetMachineCode(v=2))
+    if result[0] == None or not Helpers.IsOnRightMachine(result[0], v=2):
+        print("The license does not work: {0}".format(result[1]))
+    else:
+
+        license_key = result[0]
+
+
+    category_frame = Frame(window, bg=DGRAY)
+    pc = wmi.WMI()
+    label1 = Label(category_frame, text="Your License", font=("comfortaa", 40, "bold"), bg=DGRAY, fg='white', anchor="w")
+
+    label = Label(category_frame, text="Expiration: " + str(license_key.expires), font=("calibri", 13, "bold"), bg=DGRAY, fg='white', anchor="w")
+    label1.pack(side='top', anchor=CENTER, pady=10)
+    label.pack(side='top', anchor=CENTER, pady=10)
+    return category_frame
+
+
+############ Category 6 ############
+def display_category6():
     category_frame = Frame(window, bg=DGRAY)
     label = Label(category_frame, text='\n\n\n\n\n\n\n\n\n\n\n\nGhostOptimizer\n\nDeveloped by Duchnes\nGitHub: https://github.com/Duchnes\nCountry: Poland\n\nSpecial thanks to the open-source community for their invaluable contributions.\n\n© 2024 GhostOptimizer - All rights reserved.', font=("calibri", 10, "bold"), bg=DGRAY, fg='white', anchor="w")
     label.pack(pady=20)
@@ -709,6 +750,7 @@ category_button2.configure(command=lambda: switch_category(display_category2))
 category_button3.configure(command=lambda: switch_category(display_category3))
 category_button4.configure(command=lambda: switch_category(display_category4))
 category_button5.configure(command=lambda: switch_category(display_category5))
+category_button6.configure(command=lambda: switch_category(display_category6))
 
 # Display the initial category
 switch_category(display_category1)

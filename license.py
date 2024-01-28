@@ -57,7 +57,7 @@ def activate_license():
 
 
 # Create a button to activate the license with background color #25292e
-activate_button = tk.Button(root, text="Activate License", command=activate_license, bg="#25292e", fg="white")  # Set text color to white
+activate_button = tk.Button(root, text="Log In", command=activate_license, bg="#25292e", fg="white")  # Set text color to white
 activate_button.pack(pady=10)
 activate_button.pack(side='top', anchor=CENTER, pady=10)
 
