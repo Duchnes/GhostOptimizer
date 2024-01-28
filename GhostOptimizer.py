@@ -9,6 +9,7 @@ import platform
 import wmi
 import psutil
 import GPUtil
+import webbrowser
 
 ################### title bar ###################
 
@@ -230,8 +231,9 @@ category_menu_frame.pack(side=LEFT, fill=Y)
 # Przykładowe przyciski kategorii (możesz dostosować do własnych potrzeb)
 category_button1 = Button(category_menu_frame, text='Home Page', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button2 = Button(category_menu_frame, text='Optimization', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
-category_button3 = Button(category_menu_frame, text='Pc Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
-category_button4 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button3 = Button(category_menu_frame, text='Optimization [PRO]', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button4 = Button(category_menu_frame, text='Pc Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button5 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 
 # Przypnij przyciski do Frame
 category_button1.pack(side=TOP, fill=X, pady=2)  # Dodaj trochę większy odstęp od góry i dołu
@@ -277,6 +279,9 @@ def switch_category(category_frame):
 
 
 ############ Category 1 ############
+def callback(url):
+    webbrowser.open_new(url)
+
 def display_category1():
     category_frame = Frame(window, bg=DGRAY)
 
@@ -287,7 +292,7 @@ def display_category1():
     image_label.pack(pady=20)
 
     # Dodajemy etykietę tekstu
-    label = Label(category_frame, text='Welcome!', font=("calibri", 22, "bold"), bg=DGRAY, fg='white')
+    label = Label(category_frame, text='Welcome!', font=("calibri", 25, "bold"), bg=DGRAY, fg='white')
     label.pack(pady=00)
 
     return category_frame
@@ -363,6 +368,8 @@ def open_power_settings():
         print(f"Error: {e}")
 
 
+
+
 def display_category2():
     category_frame = Frame(window, bg=DGRAY)
     category_frame.pack()
@@ -409,8 +416,130 @@ def display_category2():
 
     return category_frame
 
+
 ############ Category 3 ############
+def telemetry_off():
+    commands = [
+        "sc delete DiagTrack",
+        "sc delete dmwappushservice",
+        "sc delete WerSvc",
+        "sc delete OneSyncSvc",
+        "sc delete MessagingService",
+        "sc delete wercplsupport",
+        "sc delete PcaSvc",
+        "sc config wlidsvc start=demand",
+        "sc delete wisvc",
+        "sc delete RetailDemo",
+        "sc delete diagsvc",
+        "sc delete shpamsvc",
+        "sc delete TermService",
+        "sc delete UmRdpService",
+        "sc delete SessionEnv",
+        "sc delete TroubleshootingSvc",
+        'for /f "tokens=1" %I in (\'reg query "HKLM\\SYSTEM\\CurrentControlSet\\Services" /k /f "wscsvc" ^| find /i "wscsvc"\') do (reg delete %I /f)',
+        'for /f "tokens=1" %I in (\'reg query "HKLM\\SYSTEM\\CurrentControlSet\\Services" /k /f "OneSyncSvc" ^| find /i "OneSyncSvc"\') do (reg delete %I /f)',
+        'for /f "tokens=1" %I in (\'reg query "HKLM\\SYSTEM\\CurrentControlSet\\Services" /k /f "MessagingService" ^| find /i "MessagingService"\') do (reg delete %I /f)',
+        'for /f "tokens=1" %I in (\'reg query "HKLM\\SYSTEM\\CurrentControlSet\\Services" /k /f "PimIndexMaintenanceSvc" ^| find /i "PimIndexMaintenanceSvc"\') do (reg delete %I /f)',
+        'for /f "tokens=1" %I in (\'reg query "HKLM\\SYSTEM\\CurrentControlSet\\Services" /k /f "UserDataSvc" ^| find /i "UserDataSvc"\') do (reg delete %I /f)',
+        'for /f "tokens=1" %I in (\'reg query "HKLM\\SYSTEM\\CurrentControlSet\\Services" /k /f "UnistoreSvc" ^| find /i "UnistoreSvc"\') do (reg delete %I /f)',
+        'for /f "tokens=1" %I in (\'reg query "HKLM\\SYSTEM\\CurrentControlSet\\Services" /k /f "BcastDVRUserService" ^| find /i "BcastDVRUserService"\') do (reg delete %I /f)',
+        'for /f "tokens=1" %I in (\'reg query "HKLM\\SYSTEM\\CurrentControlSet\\Services" /k /f "Sgrmbroker" ^| find /i "Sgrmbroker"\') do (reg delete %I /f)',
+        "sc delete diagnosticshub.standardcollector.service",
+        'reg add "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Siuf\\Rules" /v "NumberOfSIUFInPeriod" /t REG_DWORD /d 0 /f',
+        'reg delete "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Siuf\\Rules" /v "PeriodInNanoSeconds" /f',
+        'reg add "HKLM\\SYSTEM\\ControlSet001\\Control\\WMI\\AutoLogger\\AutoLogger-Diagtrack-Listener" /v Start /t REG_DWORD /d 0 /f',
+        'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat" /v AITEnable /t REG_DWORD /d 0 /f',
+        'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat" /v DisableInventory /t REG_DWORD /d 1 /f',
+        'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat" /v DisablePCA /t REG_DWORD /d 1 /f',
+        'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat" /v DisableUAR /t REG_DWORD /d 1 /f',
+        'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\MicrosoftEdge\\PhishingFilter" /v "EnabledV9" /t REG_DWORD /d 0 /f',
+        'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System" /v "EnableSmartScreen" /t REG_DWORD /d 0 /f',
+        'reg add "HKCU\\Software\\Microsoft\\Internet Explorer\\PhishingFilter" /v "EnabledV9" /t REG_DWORD /d 0 /f',
+        'reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer" /v "NoRecentDocsHistory" /t REG_DWORD /d 1 /f',
+        'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CompatTelRunner.exe" /v Debugger /t REG_SZ /d "%windir%\\System32\\taskkill.exe" /f',
+        'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeviceCensus.exe" /v Debugger /t REG_SZ /d "%windir%\\System32\\taskkill.exe" /f'
+    ]
+
+    for command in commands:
+        subprocess.run(command, shell=True)        
+
+def windows_hello():
+    commands = [
+        'schtasks /Change /TN "\Microsoft\Windows\HelloFace\FODCleanupTask" /Disable'
+    ]
+
+    for command in commands:
+        subprocess.run(command, shell=True)        
+    
+def disable_maps_tasks():
+    commands = [
+        'sc delete MapsBroker',
+        'sc delete lfsvc',
+        'schtasks /Change /TN "\\Microsoft\\Windows\\Maps\\MapsUpdateTask" /disable',
+        'schtasks /Change /TN "\\Microsoft\\Windows\\Maps\\MapsToastTask" /disable'
+    ]
+
+    for command in commands:
+        subprocess.run(command, shell=True)
+
+def uninstall_onedrive():
+    commands = [
+        r'%SystemRoot%\SysWOW64\OneDriveSetup.exe /uninstall',
+        rf'rd "{os.path.expanduser("~")}\\OneDrive" /s /q',
+        rf'rd "{os.environ["LocalAppData"]}\\Microsoft\\OneDrive" /s /q',
+        rf'rd "{os.environ["ProgramData"]}\\Microsoft OneDrive" /s /q',
+        r'rd "C:\OneDriveTemp" /s /q',
+        rf'del "{os.path.expanduser("~")}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\OneDrive.lnk" /s /f /q'
+    ]
+
+    for command in commands:
+        subprocess.run(command, shell=True)
+
+
 def display_category3():
+    category_frame = Frame(window, bg=DGRAY)
+    category_frame.pack()
+
+    # ITEM1
+    label1 = Label(category_frame, text='Disable Telemetry', font=("calibri", 16), bg=DGRAY, fg='white')
+    label1.grid(row=0, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button1 = Button(category_frame, text='PROCEED', command=telemetry_off, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button1.grid(row=0, column=2, pady=10, padx=20, sticky="e")
+    proceed_button1.bind("<Enter>", on_enter)
+    proceed_button1.bind("<Leave>", on_leave)
+
+    # ITEM2
+    label2 = Label(category_frame, text='Disable "Windows Hello"', font=("calibri", 16), bg=DGRAY, fg='white')
+    label2.grid(row=1, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button2 = Button(category_frame, text='PROCEED', command=windows_hello, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button2.grid(row=1, column=2, pady=10, padx=20, sticky="e")
+    proceed_button2.bind("<Enter>", on_enter)
+    proceed_button2.bind("<Leave>", on_leave)
+
+    # ITEM3
+    label3 = Label(category_frame, text='Remove Maps', font=("calibri", 16), bg=DGRAY, fg='white')
+    label3.grid(row=2, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button3 = Button(category_frame, text='PROCEED', command=disable_maps_tasks, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button3.grid(row=2, column=2, pady=10, padx=20, sticky="e")
+    proceed_button3.bind("<Enter>", on_enter)
+    proceed_button3.bind("<Leave>", on_leave)
+
+    # ITEM4
+    label4 = Label(category_frame, text='Remove OneDrive', font=("calibri", 16), bg=DGRAY, fg='white')
+    label4.grid(row=3, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button4 = Button(category_frame, text='PROCEED', command=uninstall_onedrive, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button4.grid(row=3, column=2, pady=10, padx=20, sticky="e")
+    proceed_button4.bind("<Enter>", on_enter)
+    proceed_button4.bind("<Leave>", on_leave)
+
+    return category_frame
+
+############ Category 4 ############
+def display_category4():
     category_frame = Frame(window, bg=DGRAY)
     pc = wmi.WMI()
     info = f"=========================== OS =========================== \n\n \
@@ -435,12 +564,15 @@ def display_category3():
     label.pack(side='bottom', anchor=CENTER, pady=10)
     return category_frame
 
-############ Category 4 ############
-def display_category4():
+############ Category 5 ############
+def display_category5():
     category_frame = Frame(window, bg=DGRAY)
-    label = Label(category_frame, text='\n\n\n\n\n\n\n\n\n\n\n\n\nGhostOptimizer\n\nDeveloped by Duchnes\nGitHub: https://github.com/Duchnes\nCountry: Poland\n\nSpecial thanks to the open-source community for their invaluable contributions.\n\n© 2024 GhostOptimizer - All rights reserved.', font=("calibri", 10, "bold"), bg=DGRAY, fg='white', anchor="w")
+    label = Label(category_frame, text='\n\n\n\n\n\n\n\n\n\n\n\nGhostOptimizer\n\nDeveloped by Duchnes\nGitHub: https://github.com/Duchnes\nCountry: Poland\n\nSpecial thanks to the open-source community for their invaluable contributions.\n\n© 2024 GhostOptimizer - All rights reserved.', font=("calibri", 10, "bold"), bg=DGRAY, fg='white', anchor="w")
     label.pack(pady=20)
     label.pack(side='top', anchor=CENTER, pady=10)
+    link1 = Label(category_frame, text="Github", font=("calibri", 10, "bold"), bg=DGRAY, fg="blue", cursor="hand2")
+    link1.pack(side="top", anchor=CENTER)
+    link1.bind("<Button-1>", lambda e: callback("https://github.com/Duchnes/GhostOptimizer"))
     return category_frame
 
 
@@ -456,6 +588,7 @@ category_button1.configure(command=lambda: switch_category(display_category1))
 category_button2.configure(command=lambda: switch_category(display_category2))
 category_button3.configure(command=lambda: switch_category(display_category3))
 category_button4.configure(command=lambda: switch_category(display_category4))
+category_button5.configure(command=lambda: switch_category(display_category5))
 
 # Display the initial category
 switch_category(display_category1)
