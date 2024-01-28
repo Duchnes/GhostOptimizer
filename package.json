@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "api": "^6.1.1",
-    "licensing": "^0.1.0",
-    "requests": "^0.3.0"
-  }
-}
