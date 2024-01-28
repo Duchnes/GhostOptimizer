@@ -10,6 +10,7 @@ import wmi
 import psutil
 import GPUtil
 import webbrowser
+import pickle
 
 ################### title bar ###################
 
@@ -224,6 +225,8 @@ root.after(10, lambda: set_appwindow(root)) # to see the icon on the task bar
 ################### end of title bar ###################
 
 
+
+
 # Nowy Frame na lewej stronie dla menu kategorii
 category_menu_frame = Frame(window, bg=RGRAY, width=400)  # Zwiększam szerokość menu dwukrotnie do 400 pikseli
 category_menu_frame.pack(side=LEFT, fill=Y)
@@ -285,6 +288,7 @@ def switch_category(category_frame):
 def callback(url):
     webbrowser.open_new(url)
 
+
 def display_category1():
     category_frame = Frame(window, bg=DGRAY)
 
@@ -297,6 +301,16 @@ def display_category1():
     # Dodajemy etykietę tekstu
     label = Label(category_frame, text='Welcome!', font=("calibri", 25, "bold"), bg=DGRAY, fg='white')
     label.pack(pady=00)
+
+    try:
+        with open("data.pkl", "rb") as file:
+            data = pickle.load(file)
+            text_entry = data.get("text", "")
+            if text_entry:
+                # Jeśli istnieje tekst, wyświetl go
+                label.config(text=f'Welcome, {text_entry}!')
+    except FileNotFoundError:
+        pass
 
     return category_frame
 
@@ -530,8 +544,21 @@ def disable_setting_sync():
     for command in commands:
         subprocess.run(command, shell=True)
 
-def install_wim_tweak_command():
+def install_wim_tweak2_command():
     command = 'install_wim_tweak.exe /o /c Microsoft-Windows-ContactSupport /r'
+    subprocess.run(command, shell=True)
+
+def remove_3d_edit_associations():
+    commands = [
+        'for /f "tokens=1* delims=" %I in (\'reg query "HKEY_CLASSES_ROOT\\SystemFileAssociations" /s /k /f "3D Edit" ^| find /i "3D Edit"\') do (reg delete "%I" /f)',
+        'for /f "tokens=1* delims=" %I in (\'reg query "HKEY_CLASSES_ROOT\\SystemFileAssociations" /s /k /f "3D Print" ^| find /i "3D Print"\') do (reg delete "%I" /f)'
+    ]
+
+    for command in commands:
+        subprocess.run(command, shell=True)
+
+def install_wim_tweak3_command():
+    command = 'install_wim_tweak.exe /o /c Microsoft-PPIProjection-Package /r'
     subprocess.run(command, shell=True)
 
 
@@ -606,19 +633,28 @@ def display_category3():
     label8 = Label(category_frame, text='Disable Windows Get Help', font=("calibri", 16), bg=DGRAY, fg='white')
     label8.grid(row=7, column=0, pady=10, padx=(10, 10), sticky="w")
 
-    proceed_button8 = Button(category_frame, text='PROCEED', command=install_wim_tweak_command, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button8 = Button(category_frame, text='PROCEED', command=install_wim_tweak2_command, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
     proceed_button8.grid(row=7, column=2, pady=10, padx=20, sticky="e")
     proceed_button8.bind("<Enter>", on_enter)
     proceed_button8.bind("<Leave>", on_leave)
 
     # ITEM9
-    label9 = Label(category_frame, text='Disable Windows Get Help', font=("calibri", 16), bg=DGRAY, fg='white')
+    label9 = Label(category_frame, text='Disable Microsoft-PPIProjection-Package', font=("calibri", 16), bg=DGRAY, fg='white')
     label9.grid(row=8, column=0, pady=10, padx=(10, 10), sticky="w")
 
-    proceed_button9 = Button(category_frame, text='PROCEED', command=install_wim_tweak_command, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button9 = Button(category_frame, text='PROCEED', command=install_wim_tweak3_command, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
     proceed_button9.grid(row=8, column=2, pady=10, padx=20, sticky="e")
     proceed_button9.bind("<Enter>", on_enter)
     proceed_button9.bind("<Leave>", on_leave)
+
+    # ITEM10
+    label10 = Label(category_frame, text='Disable Paint 3D Print', font=("calibri", 16), bg=DGRAY, fg='white')
+    label10.grid(row=9, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button10 = Button(category_frame, text='PROCEED', command=remove_3d_edit_associations, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button10.grid(row=9, column=2, pady=10, padx=20, sticky="e")
+    proceed_button10.bind("<Enter>", on_enter)
+    proceed_button10.bind("<Leave>", on_leave)
 
     return category_frame
 

@@ -20,7 +20,7 @@ w.overrideredirect(1) #for hiding titlebar
 
 #new window to open
 def new_win():
-    subprocess.run(['python', 'GhostOptimizer.py'])
+    subprocess.run(['python', 'license.py'])
 
 Frame(w, width=427, height=250, bg='#272727').place(x=0,y=0)
 ghost_icon = PhotoImage(file='icon.png')
