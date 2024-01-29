@@ -7,9 +7,11 @@ Tool for optimizing Windows 10/11
 the project is currently being developed.
 
 ## Features
+- Create restore point (on homepage)
 - System optimization
   - Clear **temp** folder
   - Clear **appdata temp** folder
+  - Clear **prefetch** folder
   - Add **ultimate performance** power plan
   - Open **power plan options**
 - Advanced system optimization
@@ -24,7 +26,6 @@ the project is currently being developed.
   - Disable **Microsoft-PPIProjection-Package**
   - Disable **Paint 3D Print**
 - Show System info
-- License System
 
 ## Supported Platforms
 We are currently supporting Windows 10 and Windows 11. We didn't tested our tool on other platforms.

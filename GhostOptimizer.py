@@ -13,31 +13,91 @@ import psutil
 import GPUtil
 import webbrowser
 import pickle
+from tkinter import font
+from PIL import ImageTk, Image
+import time
 
+# Loading window
+loading_window = Tk()
+
+width_of_window = 427
+height_of_window = 250
+screen_width = loading_window.winfo_screenwidth()
+screen_height = loading_window.winfo_screenheight()
+x_coordinate = (screen_width / 2) - (width_of_window / 2)
+y_coordinate = (screen_height / 2) - (height_of_window / 2)
+loading_window.geometry("%dx%d+%d+%d" % (width_of_window, height_of_window, x_coordinate, y_coordinate))
+loading_window.overrideredirect(1)  # for hiding titlebar
+
+Frame(loading_window, width=427, height=250, bg='#272727').place(x=0, y=0)
+ghost_icon = PhotoImage(file='_internal/icon.png')
+label1 = Label(loading_window, image=ghost_icon, bg='#272727')
+label1.image = ghost_icon  # Reference to the image to prevent garbage collection
+label1.place(x=165, y=35)
+
+label2 = Label(loading_window, text='Loading...', fg='white', bg='#272727')  # decorate it 
+label2.configure(font=("Calibri", 11))
+label2.place(x=10, y=215)
+
+image_a = ImageTk.PhotoImage(Image.open('_internal/c2.png'))
+image_b = ImageTk.PhotoImage(Image.open('_internal/c1.png'))
+
+for i in range(5):  # 5 loops
+    l1 = Label(loading_window, image=image_a, border=0, relief=SUNKEN).place(x=180, y=145)
+    l2 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=200, y=145)
+    l3 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=220, y=145)
+    l4 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=240, y=145)
+    loading_window.update_idletasks()
+    time.sleep(0.5)
+
+    l1 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=180, y=145)
+    l2 = Label(loading_window, image=image_a, border=0, relief=SUNKEN).place(x=200, y=145)
+    l3 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=220, y=145)
+    l4 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=240, y=145)
+    loading_window.update_idletasks()
+    time.sleep(0.5)
+
+    l1 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=180, y=145)
+    l2 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=200, y=145)
+    l3 = Label(loading_window, image=image_a, border=0, relief=SUNKEN).place(x=220, y=145)
+    l4 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=240, y=145)
+    loading_window.update_idletasks()
+    time.sleep(0.5)
+
+    l1 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=180, y=145)
+    l2 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=200, y=145)
+    l3 = Label(loading_window, image=image_b, border=0, relief=SUNKEN).place(x=220, y=145)
+    l4 = Label(loading_window, image=image_a, border=0, relief=SUNKEN).place(x=240, y=145)
+    loading_window.update_idletasks()
+    time.sleep(0.5)
+
+loading_window.destroy()
+
+
+
+# Create the main window
 ################### title bar ###################
 
-tk_title = "GhostOptimizer" # Put here your window title
+tk_title = "GhostOptimizer" 
 
-root=Tk() # root (your app doesn't go in root, it goes in window)
+root=Tk()
 root.title(tk_title) 
-root.overrideredirect(True) # turns off title bar, geometry
-root.geometry('900x600+75+75') # set new geometry the + 75 + 75 is where it starts on the screen
-#root.iconbitmap("your_icon.ico") # to show your own icon 
-root.minimized = False # only to know if root is minimized
-root.maximized = False # only to know if root is maximized
+root.overrideredirect(True) # Turn off Windows Title Bar
+root.geometry('900x600+75+75')
+root.minimized = False
+root.maximized = False
 
 
-LGRAY = '#3e4042' # button color effects in the title bar (Hex color)
-DGRAY = '#25292e' # window background color               (Hex color)
-RGRAY = '#10121f' # title bar color                       (Hex color)
+LGRAY = '#3e4042' # button color effects
+DGRAY = '#25292e' # window background color
+RGRAY = '#10121f' # title bar color
 
 root.config(bg="#25292e")
 title_bar = Frame(root, bg=RGRAY, relief='raised', bd=0,highlightthickness=0)
 
 
-def set_appwindow(mainWindow): # to display the window icon on the taskbar, 
-                               # even when using root.overrideredirect(True
-    # Some WindowsOS styles, required for task bar integration
+def set_appwindow(mainWindow):
+
     GWL_EXSTYLE = -20
     WS_EX_APPWINDOW = 0x00040000
     WS_EX_TOOLWINDOW = 0x00000080
@@ -53,52 +113,48 @@ def set_appwindow(mainWindow): # to display the window icon on the taskbar,
     
 
 def minimize_me():
-    root.attributes("-alpha",0) # so you can't see the window when is minimized
+    root.attributes("-alpha",0)
     root.minimized = True       
 
 
 def deminimize(event):
 
     root.focus() 
-    root.attributes("-alpha",1) # so you can see the window when is not minimized
+    root.attributes("-alpha",1)
     if root.minimized == True:
         root.minimized = False                              
         
 
 def maximize_me():
 
-    if root.maximized == False: # if the window was not maximized
+    if root.maximized == False:
         root.normal_size = root.geometry()
         expand_button.config(text=" 🗗 ")
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
         root.maximized = not root.maximized 
-        # now it's maximized
         
-    else: # if the window was maximized
+    else:
         expand_button.config(text=" 🗖 ")
         root.geometry(root.normal_size)
         root.maximized = not root.maximized
-        # now it is not maximized
 
-# put a close button on the title bar
+
 close_button = Button(title_bar, text='  ×  ', command=root.destroy,bg=RGRAY,padx=2,pady=2,font=("calibri", 13),bd=0,fg='white',highlightthickness=0)
 expand_button = Button(title_bar, text=' 🗖 ', command=maximize_me,bg=RGRAY,padx=2,pady=2,bd=0,fg='white',font=("calibri", 13),highlightthickness=0)
 minimize_button = Button(title_bar, text=' 🗕 ',command=minimize_me,bg=RGRAY,padx=2,pady=2,bd=0,fg='white',font=("calibri", 13),highlightthickness=0)
 title_bar_title = Label(title_bar, text=tk_title, bg=RGRAY,bd=0,fg='white',font=("helvetica", 10),highlightthickness=0)
 
-# a frame for the main area of the window, this is where the actual app will go
+
 window = Frame(root, bg=DGRAY,highlightthickness=0)
 
-# pack the widgets
+
 title_bar.pack(fill=X)
 close_button.pack(side=RIGHT,ipadx=7,ipady=1)
 expand_button.pack(side=RIGHT,ipadx=7,ipady=1)
 minimize_button.pack(side=RIGHT,ipadx=7,ipady=1)
 title_bar_title.pack(side=LEFT, padx=10)
-window.pack(expand=1, fill=BOTH) # replace this with your main Canvas/Frame/etc.
-#xwin=None
-#ywin=None
-# bind title bar motion to the move window function
+window.pack(expand=1, fill=BOTH)
+
 
 def changex_on_hovering(event):
     global close_button
@@ -130,7 +186,7 @@ def returnm_size_on_hovering(event):
     minimize_button['bg']=RGRAY
     
 
-def get_pos(event): # this is executed when the title bar is clicked to move the window
+def get_pos(event):
     if root.maximized == False:
  
         xwin = root.winfo_x()
@@ -142,12 +198,12 @@ def get_pos(event): # this is executed when the title bar is clicked to move the
         xwin = xwin - startx
 
         
-        def move_window(event): # runs when window is dragged
+        def move_window(event): 
             root.config(cursor="fleur")
             root.geometry(f'+{event.x_root + xwin}+{event.y_root + ywin}')
 
 
-        def release_window(event): # runs when window is released
+        def release_window(event):
             root.config(cursor="arrow")
             
             
@@ -159,10 +215,9 @@ def get_pos(event): # this is executed when the title bar is clicked to move the
         expand_button.config(text=" 🗖 ")
         root.maximized = not root.maximized
 
-title_bar.bind('<Button-1>', get_pos) # so you can drag the window from the title bar
-title_bar_title.bind('<Button-1>', get_pos) # so you can drag the window from the title 
+title_bar.bind('<Button-1>', get_pos) 
+title_bar_title.bind('<Button-1>', get_pos) 
 
-# button effects in the title bar when hovering over buttons
 close_button.bind('<Enter>',changex_on_hovering)
 close_button.bind('<Leave>',returnx_to_normalstate)
 expand_button.bind('<Enter>', change_size_on_hovering)
@@ -179,13 +234,13 @@ def resizex(event):
     xwin = root.winfo_x()
     difference = (event.x_root - xwin) - root.winfo_width()
     
-    if root.winfo_width() > 150 : # 150 is the minimum width for the window
+    if root.winfo_width() > 150 :
         try:
             root.geometry(f"{ root.winfo_width() + difference }x{ root.winfo_height() }")
         except:
             pass
     else:
-        if difference > 0: # so the window can't be too small (150x150)
+        if difference > 0: 
             try:
                 root.geometry(f"{ root.winfo_width() + difference }x{ root.winfo_height() }")
             except:
@@ -203,13 +258,13 @@ def resizey(event):
     ywin = root.winfo_y()
     difference = (event.y_root - ywin) - root.winfo_height()
 
-    if root.winfo_height() > 150: # 150 is the minimum height for the window
+    if root.winfo_height() > 150: 
         try:
             root.geometry(f"{ root.winfo_width()  }x{ root.winfo_height() + difference}")
         except:
             pass
     else:
-        if difference > 0: # so the window can't be too small (150x150)
+        if difference > 0: 
             try:
                 root.geometry(f"{ root.winfo_width()  }x{ root.winfo_height() + difference}")
             except:
@@ -219,9 +274,9 @@ def resizey(event):
 
 resizey_widget.bind("<B1-Motion>",resizey)
 
-# some settings
-root.bind("<FocusIn>",deminimize) # to view the window by clicking on the window icon on the taskbar
-root.after(10, lambda: set_appwindow(root)) # to see the icon on the task bar
+
+root.bind("<FocusIn>",deminimize)
+root.after(10, lambda: set_appwindow(root)) 
 
 
 ################### end of title bar ###################
@@ -229,34 +284,32 @@ root.after(10, lambda: set_appwindow(root)) # to see the icon on the task bar
 
 
 
-# Nowy Frame na lewej stronie dla menu kategorii
-category_menu_frame = Frame(window, bg=RGRAY, width=400)  # Zwiększam szerokość menu dwukrotnie do 400 pikseli
+# Left side frame
+category_menu_frame = Frame(window, bg=RGRAY, width=400) 
 category_menu_frame.pack(side=LEFT, fill=Y)
 
-# Przykładowe przyciski kategorii (możesz dostosować do własnych potrzeb)
+# Buttons
 category_button1 = Button(category_menu_frame, text='Home Page', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button2 = Button(category_menu_frame, text='Optimization', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button3 = Button(category_menu_frame, text='Optimization [PRO]', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button4 = Button(category_menu_frame, text='Pc Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
-category_button5 = Button(category_menu_frame, text='License Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
-category_button6 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button5 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 
-# Przypnij przyciski do Frame
-category_button1.pack(side=TOP, fill=X, pady=2)  # Dodaj trochę większy odstęp od góry i dołu
+# Add Buttons to frame
+category_button1.pack(side=TOP, fill=X, pady=2) 
 category_button2.pack(side=TOP, fill=X, pady=2)
 category_button3.pack(side=TOP, fill=X, pady=2)
 category_button4.pack(side=TOP, fill=X, pady=2)
 category_button5.pack(side=TOP, fill=X, pady=2)
-category_button6.pack(side=TOP, fill=X, pady=2)
 
-# Efekty podświetlania przycisków po najechaniu myszką
+
+# Light up buttons
 def on_enter(event):
     event.widget['bg'] = LGRAY
 
 def on_leave(event):
     event.widget['bg'] = RGRAY
 
-# Przypnij efekty podświetlania przycisków
 category_button1.bind('<Enter>', on_enter)
 category_button1.bind('<Leave>', on_leave)
 category_button2.bind('<Enter>', on_enter)
@@ -267,16 +320,13 @@ category_button4.bind('<Enter>', on_enter)
 category_button4.bind('<Leave>', on_leave)
 category_button5.bind('<Enter>', on_enter)
 category_button5.bind('<Leave>', on_leave)
-category_button6.bind('<Enter>', on_enter)
-category_button6.bind('<Leave>', on_leave)
 
-# Function to switch between categories
+
+# Switch categories
 def switch_category(category_frame):
-    # Destroy current category frame (if exists)
     if hasattr(root, 'current_category_frame'):
         root.current_category_frame.destroy()
 
-    # Create new category frame based on the selected category
     root.current_category_frame = category_frame()
     root.current_category_frame.pack(side=LEFT, fill=BOTH, expand=True)
 
@@ -289,55 +339,54 @@ def switch_category(category_frame):
 
 
 
-
-############ Category 1 ############
-def callback(url):
-    webbrowser.open_new(url)
-
-
-def display_category1():
-    category_frame = Frame(window, bg=DGRAY)
-
-    # Dodajemy zdjęcie
-    image = PhotoImage(file="BigImage.png")
-    image_label = Label(category_frame, image=image, bg=DGRAY)
-    image_label.image = image  # Zapobiega usuwaniu obrazu przez garbage collector
-    image_label.pack(pady=20)
-
-    # Dodajemy etykietę tekstu
-    label = Label(category_frame, text='Welcome!', font=("calibri", 25, "bold"), bg=DGRAY, fg='white')
-    label.pack(pady=00)
-
-    try:
-        with open("data.pkl", "rb") as file:
-            data = pickle.load(file)
-            text_entry = data.get("text", "")
-            if text_entry:
-                # Jeśli istnieje tekst, wyświetl go
-                label.config(text=f'Welcome, {text_entry}!')
-    except FileNotFoundError:
-        pass
-
-    return category_frame
-
-
-
-############ Category 2 ############
 def show_notification(message):
     root = Tk()
     root.withdraw()
     messagebox.showinfo("Notification", message)
     root.destroy()
 
+############ Category 1 ############
+def callback(url):
+    webbrowser.open_new(url)
+
+def create_restore_point():
+    try:
+        # Tworzenie punktu przywracania o nazwie "GhostOptimizer"
+        subprocess.run(['powershell', '-Command', 'Checkpoint-Computer -Description "GhostOptimizer" -RestorePointType "MODIFY_SETTINGS"'])
+        print("Restore point 'GhostOptimizer' created successfully.")
+        show_notification(f"Restore point created successfully.")
+    except Exception as e:
+        print(f"Error creating restore point: {e}")
+
+def display_category1():
+    category_frame = Frame(window, bg=DGRAY)
+
+    image = PhotoImage(file="_internal/BigImage.png")
+    image_label = Label(category_frame, image=image, bg=DGRAY)
+    image_label.image = image
+    image_label.pack(pady=20)
+
+    label = Label(category_frame, text='Welcome!', font=("calibri", 25, "bold"), bg=DGRAY, fg='white')
+    label.pack(pady=00)
+
+    # ITEM1
+
+    proceed_button = Button(category_frame, text='Create Restore Point', command=create_restore_point, font=("calibri", 12),
+                            bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button.bind("<Enter>", on_enter)
+    proceed_button.bind("<Leave>", on_leave)
+    proceed_button.pack(pady=100)
+
+    return category_frame
+
+
+############ Category 2 ############
 def clear_temp():
     try:
-        # Ścieżka do folderu temp (dla systemu Windows)
         temp_folder_path = os.path.join(os.environ['TEMP'])
         
-        # Pobierz listę plików w folderze temp
         files = os.listdir(temp_folder_path)
 
-        # Usuń każdy plik w folderze temp
         for file in files:
             file_path = os.path.join(temp_folder_path, file)
             try:
@@ -354,13 +403,10 @@ def clear_temp():
 
 def clear_temp2():
     try:
-        # Ścieżka do folderu temp w katalogu Windows
         temp_folder_path = os.path.join(os.environ['SystemRoot'], 'Temp')
         
-        # Pobierz listę plików w folderze temp
         files = os.listdir(temp_folder_path)
 
-        # Usuń każdy plik w folderze temp
         for file in files:
             file_path = os.path.join(temp_folder_path, file)
             try:
@@ -376,7 +422,6 @@ def clear_temp2():
         print(f"Błąd podczas czyszczenia folderu temp w katalogu Windows: {e}")
 
 def ultimate_power():
-    # Run powercfg command to set the power plan to "Ultimate Performance"
     command = "powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61"
     try:
         subprocess.run(command, shell=True, check=True)
@@ -389,6 +434,26 @@ def open_power_settings():
         subprocess.run(["control", "powercfg.cpl"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
+
+def clear_prefetch():
+    try:
+        prefetch_folder_path = os.path.join(os.environ['SystemRoot'], 'Prefetch')
+        
+        files = os.listdir(prefetch_folder_path)
+
+        for file in files:
+            file_path = os.path.join(prefetch_folder_path, file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print(f"Nie udało się usunąć pliku/folderu: {e}")
+
+        show_notification(f"Folder {prefetch_folder_path} has been cleared successfully.")
+    except Exception as e:
+        print(f"Błąd podczas czyszczenia folderu prefetch w katalogu Windows: {e}")
 
 
 
@@ -418,24 +483,34 @@ def display_category2():
     proceed_button2.bind("<Leave>", on_leave)
 
     # ITEM3
-    label3 = Label(category_frame, text='Add "Ultimate Performance" power plan', font=("calibri", 16), bg=DGRAY, fg='white')
+    label3 = Label(category_frame, text='Clean the PREFETCH folder', font=("calibri", 16), bg=DGRAY, fg='white')
     label3.grid(row=2, column=0, pady=10, padx=(10, 10), sticky="w")
 
-    proceed_button3 = Button(category_frame, text='PROCEED', command=ultimate_power, font=("calibri", 12),
+    proceed_button3 = Button(category_frame, text='PROCEED', command=clear_prefetch, font=("calibri", 12),
                              bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
     proceed_button3.grid(row=2, column=2, pady=10, padx=20, sticky="e")
     proceed_button3.bind("<Enter>", on_enter)
     proceed_button3.bind("<Leave>", on_leave)
 
     # ITEM4
-    label4 = Label(category_frame, text='Open power plan settings', font=("calibri", 16), bg=DGRAY, fg='white')
+    label4 = Label(category_frame, text='Add "Ultimate Performance" power plan', font=("calibri", 16), bg=DGRAY, fg='white')
     label4.grid(row=3, column=0, pady=10, padx=(10, 10), sticky="w")
 
-    proceed_button4 = Button(category_frame, text='PROCEED', command=open_power_settings, font=("calibri", 12),
+    proceed_button4 = Button(category_frame, text='PROCEED', command=ultimate_power, font=("calibri", 12),
                              bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
     proceed_button4.grid(row=3, column=2, pady=10, padx=20, sticky="e")
     proceed_button4.bind("<Enter>", on_enter)
     proceed_button4.bind("<Leave>", on_leave)
+
+    # ITEM5
+    label5 = Label(category_frame, text='Open power plan settings', font=("calibri", 16), bg=DGRAY, fg='white')
+    label5.grid(row=4, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button5 = Button(category_frame, text='PROCEED', command=open_power_settings, font=("calibri", 12),
+                             bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button5.grid(row=4, column=2, pady=10, padx=20, sticky="e")
+    proceed_button5.bind("<Enter>", on_enter)
+    proceed_button5.bind("<Leave>", on_leave)
 
     return category_frame
 
@@ -693,40 +768,6 @@ def display_category4():
 
 ############ Category 5 ############
 def display_category5():
-    RSAPubKey = "<RSAKeyValue><Modulus>i5XW4q7h+JbUPcf5XQo/KCEs/OqJmchV+/vC4i4wFD8tnaAqxuxRn3Qjnng7SsiPzDP6CPYp9KQuQ1JrfqhNphuzJUpHAkkmkAzd7fGvMiylVIrr2+yTXE9OrGNC7QANoppxDAVgIkEP4P5m6fa2kPzXYXfmrlautdxZhR1oAA0Tj3H0oHl31PI+hvjJxvFOEaJRWupAzpujsQ0Dq2OfTFhMJwt+a8U90aZHzvJ8pKE30EhmLRjoVS+wZV/xtxqmGYcFJvjkGi2xYeDerfxL1a9yyKm27zK/I5vimKLsl/l4jcsbZVA1dW7FkJBqMcVXxWB2D1UgsAbnGHgHw1P9iQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>"
-    auth = "WyI3MzAzNjE4NCIsIk9QRjZCMHhxNGxTUkkwSzZwajFNOFppMU9xQ2hpTlZsbzR3YlRsdE0iXQ=="
-
-    try:
-        with open("data.pkl", "rb") as file:
-            data = pickle.load(file)
-            text_entry = data.get("text", "")
-    except FileNotFoundError:
-        pass
-
-    result = Key.activate(token=auth,\
-                       rsa_pub_key=RSAPubKey,\
-                       product_id=23761, \
-                       key=text_entry,  # Using the key entered in the text entry
-                       machine_code=Helpers.GetMachineCode(v=2))
-    if result[0] == None or not Helpers.IsOnRightMachine(result[0], v=2):
-        print("The license does not work: {0}".format(result[1]))
-    else:
-
-        license_key = result[0]
-
-
-    category_frame = Frame(window, bg=DGRAY)
-    pc = wmi.WMI()
-    label1 = Label(category_frame, text="Your License", font=("comfortaa", 40, "bold"), bg=DGRAY, fg='white', anchor="w")
-
-    label = Label(category_frame, text="Expiration: " + str(license_key.expires), font=("calibri", 13, "bold"), bg=DGRAY, fg='white', anchor="w")
-    label1.pack(side='top', anchor=CENTER, pady=10)
-    label.pack(side='top', anchor=CENTER, pady=10)
-    return category_frame
-
-
-############ Category 6 ############
-def display_category6():
     category_frame = Frame(window, bg=DGRAY)
     label = Label(category_frame, text='\n\n\n\n\n\n\n\n\n\n\n\nGhostOptimizer\n\nDeveloped by Duchnes\nGitHub: https://github.com/Duchnes\nCountry: Poland\n\nSpecial thanks to the open-source community for their invaluable contributions.\n\n© 2024 GhostOptimizer - All rights reserved.', font=("calibri", 10, "bold"), bg=DGRAY, fg='white', anchor="w")
     label.pack(pady=20)
@@ -744,28 +785,18 @@ def display_category6():
 
 
 
+
 # Bind category buttons to switch_category function
 category_button1.configure(command=lambda: switch_category(display_category1))
 category_button2.configure(command=lambda: switch_category(display_category2))
 category_button3.configure(command=lambda: switch_category(display_category3))
 category_button4.configure(command=lambda: switch_category(display_category4))
 category_button5.configure(command=lambda: switch_category(display_category5))
-category_button6.configure(command=lambda: switch_category(display_category6))
 
 # Display the initial category
 switch_category(display_category1)
 
 
-
-
-
-
-
-
-
-
-
-
-
+# Schedule the main_content function to be called after 3 seconds
 
 root.mainloop()
