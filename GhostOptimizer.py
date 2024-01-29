@@ -28,6 +28,7 @@ x_coordinate = (screen_width / 2) - (width_of_window / 2)
 y_coordinate = (screen_height / 2) - (height_of_window / 2)
 loading_window.geometry("%dx%d+%d+%d" % (width_of_window, height_of_window, x_coordinate, y_coordinate))
 loading_window.overrideredirect(1)  # for hiding titlebar
+loading_window.iconbitmap("_internal/icon.ico")
 
 Frame(loading_window, width=427, height=250, bg='#272727').place(x=0, y=0)
 ghost_icon = PhotoImage(file='_internal/icon.png')
@@ -86,6 +87,7 @@ root.overrideredirect(True) # Turn off Windows Title Bar
 root.geometry('900x600+75+75')
 root.minimized = False
 root.maximized = False
+root.iconbitmap("_internal/icon.ico")
 
 
 LGRAY = '#3e4042' # button color effects
