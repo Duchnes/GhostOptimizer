@@ -27,6 +27,15 @@ the project is currently being developed.
   - Disable **Paint 3D Print**
 - Show System info
 
+## Installation
+1. Go to the [Releases](https://github.com/Duchnes/GhostOptimizer/releases)
+2. Download **GhostOptimizerSetup.exe** from latest release
+3. Finish intallation
+
+## Uninstallation
+1. Go to the installation folder (right click on icon, open file location)
+2. Run **Uninstall GhostOptimizer.exe**
+
 ## Supported Platforms
 We are currently supporting Windows 10 and Windows 11. We didn't tested our tool on other platforms.
 
