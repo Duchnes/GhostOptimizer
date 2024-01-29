@@ -29,3 +29,6 @@ the project is currently being developed.
 
 ## Supported Platforms
 We are currently supporting Windows 10 and Windows 11. We didn't tested our tool on other platforms.
+
+
+![GhostOptimizer](https://github.com/Duchnes/GhostOptimizer/assets/72981462/06f38f99-1220-445f-890f-fc0054f7251f)
