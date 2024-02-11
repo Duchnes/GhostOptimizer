@@ -365,18 +365,6 @@ def create_restore_point():
     except Exception as e:
         print(f"Error creating restore point: {e}")
 
-def create_registry_backup():
-    try:
-
-        project_folder = os.path.dirname(os.path.abspath(__file__))
-
-        backup_path = os.path.join(project_folder, "registry_backup.reg")
-
-        subprocess.run(['regedit.exe', '/e', backup_path])
-        
-        print("Registry backup created successfully.")
-    except Exception as e:
-        print("An error occurred:", e)
 
 def display_category1():
     category_frame = Frame(window, bg=DGRAY)
@@ -390,18 +378,11 @@ def display_category1():
     label.pack(pady=00)
 
     # ITEM1
-    proceed_button1 = Button(category_frame, text='Create Restore Point', command=create_restore_point, font=("calibri", 12),
+    proceed_button = Button(category_frame, text='Create Restore Point', command=create_restore_point, font=("calibri", 12),
                             bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
-    proceed_button1.bind("<Enter>", on_enter)
-    proceed_button1.bind("<Leave>", on_leave)
-    proceed_button1.pack(side="left", padx=(100, 20), pady=100)
-
-    # ITEM2
-    proceed_button2 = Button(category_frame, text='Create Registry Backup', command=create_registry_backup, font=("calibri", 12),
-                            bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
-    proceed_button2.bind("<Enter>", on_enter)
-    proceed_button2.bind("<Leave>", on_leave)
-    proceed_button2.pack(side="right", padx=(20, 100), pady=100)
+    proceed_button.bind("<Enter>", on_enter)
+    proceed_button.bind("<Leave>", on_leave)
+    proceed_button.pack(pady=100)
 
     return category_frame
 
@@ -825,7 +806,7 @@ def display_category4():
     label2.grid(row=1, column=0, pady=10, padx=(10, 10), sticky="w")
 
     proceed_button2 = Button(category_frame, text='PROCEED', command=networklimit_off, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
-    proceed_button2.grid(row=0, column=2, pady=10, padx=20, sticky="e")
+    proceed_button2.grid(row=1, column=2, pady=10, padx=20, sticky="e")
     proceed_button2.bind("<Enter>", on_enter)
     proceed_button2.bind("<Leave>", on_leave)
 
@@ -834,7 +815,7 @@ def display_category4():
     label3.grid(row=2, column=0, pady=10, padx=(10, 10), sticky="w")
 
     proceed_button3 = Button(category_frame, text='PROCEED', command=hibernation_off, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
-    proceed_button3.grid(row=0, column=2, pady=10, padx=20, sticky="e")
+    proceed_button3.grid(row=2, column=2, pady=10, padx=20, sticky="e")
     proceed_button3.bind("<Enter>", on_enter)
     proceed_button3.bind("<Leave>", on_leave)
 
