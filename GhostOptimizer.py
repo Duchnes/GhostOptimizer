@@ -3,6 +3,8 @@ from tkinter import messagebox
 from ctypes import windll
 from licensing.models import *
 from licensing.methods import Key, Helpers
+from tkinter import font
+from PIL import ImageTk, Image
 import os
 import shutil
 import subprocess
@@ -13,9 +15,8 @@ import psutil
 import GPUtil
 import webbrowser
 import pickle
-from tkinter import font
-from PIL import ImageTk, Image
 import time
+import winreg
 
 # Loading window
 loading_window = Tk()
@@ -364,6 +365,19 @@ def create_restore_point():
     except Exception as e:
         print(f"Error creating restore point: {e}")
 
+def create_registry_backup():
+    try:
+
+        project_folder = os.path.dirname(os.path.abspath(__file__))
+
+        backup_path = os.path.join(project_folder, "registry_backup.reg")
+
+        subprocess.run(['regedit.exe', '/e', backup_path])
+        
+        print("Registry backup created successfully.")
+    except Exception as e:
+        print("An error occurred:", e)
+
 def display_category1():
     category_frame = Frame(window, bg=DGRAY)
 
@@ -376,12 +390,18 @@ def display_category1():
     label.pack(pady=00)
 
     # ITEM1
-
-    proceed_button = Button(category_frame, text='Create Restore Point', command=create_restore_point, font=("calibri", 12),
+    proceed_button1 = Button(category_frame, text='Create Restore Point', command=create_restore_point, font=("calibri", 12),
                             bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
-    proceed_button.bind("<Enter>", on_enter)
-    proceed_button.bind("<Leave>", on_leave)
-    proceed_button.pack(pady=100)
+    proceed_button1.bind("<Enter>", on_enter)
+    proceed_button1.bind("<Leave>", on_leave)
+    proceed_button1.pack(side="left", padx=(100, 20), pady=100)
+
+    # ITEM2
+    proceed_button2 = Button(category_frame, text='Create Registry Backup', command=create_registry_backup, font=("calibri", 12),
+                            bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button2.bind("<Enter>", on_enter)
+    proceed_button2.bind("<Leave>", on_leave)
+    proceed_button2.pack(side="right", padx=(20, 100), pady=100)
 
     return category_frame
 
@@ -747,31 +767,78 @@ def display_category3():
 
 
 ############ Category 4 ############
+def powerlimit_off():
+    try:
+
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SYSTEM\CurrentControlSet\Control\Power\PowerThrottling", 0, winreg.KEY_SET_VALUE)
+
+        winreg.SetValueEx(key, "PowerThrottlingOff", 0, winreg.REG_DWORD, 1)
+
+        winreg.CloseKey(key)
+        
+        show_notification("Power limits disabled successfully.")
+    except Exception as e:
+        print("An error occurred:", e)
+
+def networklimit_off():
+    try:
+
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", 0, winreg.KEY_SET_VALUE)
+
+        winreg.SetValueEx(key, "NetworkThrottlingIndex", 0, winreg.REG_DWORD, 0xffffffff)
+        winreg.SetValueEx(key, "SystemResponsiveness", 0, winreg.REG_DWORD, 0x0)
+
+        winreg.CloseKey(key)
+        
+        show_notification("Network limits disabled successfully.")
+    except Exception as e:
+        print("An error occurred:", e)
+
+def hibernation_off():
+    try:
+
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SYSTEM\CurrentControlSet\Control\Power", 0, winreg.KEY_SET_VALUE)
+
+        winreg.SetValueEx(key, "HibernateEnabled", 0, winreg.REG_DWORD, 0x0)
+
+        winreg.CloseKey(key)
+        
+        show_notification("Hibernation disabled successfully.")
+    except Exception as e:
+        print("An error occurred:", e)
+        
 def display_category4():
     category_frame = Frame(window, bg=DGRAY)
-    pc = wmi.WMI()
-    info = f"=========================== OS =========================== \n\n \
-    Name: {platform.platform()}\n \
-    Version: {platform.version()}\n \
-    User Name: {platform.node()}\n\n \
-    =========================== CPU =========================== \n\n \
-    Name: {pc.Win32_Processor()[0].name}\n \
-    Psyhical Cores: {psutil.cpu_count(logical=False)}\n \
-    Total Cores: {psutil.cpu_count(logical=True)}\n\n \
-    =========================== GPU =========================== \n\n \
-    Name: {pc.Win32_VideoController()[0].name}\n\n \
-    =========================== MEMORY =========================== \n\n \
-    Total: {psutil.virtual_memory().total / 1024 / 1024 / 1024:.2f} GB\n \
-    Used: {psutil.virtual_memory().used / 1024 / 1024 / 1024:.2f} GB\n \
-    Avaiable: {psutil.virtual_memory().available / 1024 / 1024 / 1024:.2f} GB\n \
-    "
-    label1 = Label(category_frame, text="Your PC", font=("comfortaa", 40, "bold"), bg=DGRAY, fg='white', anchor="w")
-    label = Label(category_frame, text=info, font=("calibri", 13, "bold"), bg=DGRAY, fg='white', anchor="w")
-    label.pack(pady=20)
-    label1.pack(side='top', anchor=CENTER, pady=10)
-    label.pack(side='bottom', anchor=CENTER, pady=10)
-    return category_frame
+    category_frame.pack()
 
+    # ITEM1
+    label1 = Label(category_frame, text='Disable Power Limits', font=("calibri", 16), bg=DGRAY, fg='white')
+    label1.grid(row=0, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button1 = Button(category_frame, text='PROCEED', command=powerlimit_off, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button1.grid(row=0, column=2, pady=10, padx=20, sticky="e")
+    proceed_button1.bind("<Enter>", on_enter)
+    proceed_button1.bind("<Leave>", on_leave)
+
+    # ITEM2
+    label2 = Label(category_frame, text='Disable Network Limits', font=("calibri", 16), bg=DGRAY, fg='white')
+    label2.grid(row=1, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button2 = Button(category_frame, text='PROCEED', command=networklimit_off, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button2.grid(row=0, column=2, pady=10, padx=20, sticky="e")
+    proceed_button2.bind("<Enter>", on_enter)
+    proceed_button2.bind("<Leave>", on_leave)
+
+    # ITEM3
+    label3 = Label(category_frame, text='Disable Hibernation', font=("calibri", 16), bg=DGRAY, fg='white')
+    label3.grid(row=2, column=0, pady=10, padx=(10, 10), sticky="w")
+
+    proceed_button3 = Button(category_frame, text='PROCEED', command=hibernation_off, font=("calibri", 12), bg=RGRAY, fg='white', borderwidth=3, relief="raised", padx=10, pady=5, bd=0, highlightthickness=0)
+    proceed_button3.grid(row=0, column=2, pady=10, padx=20, sticky="e")
+    proceed_button3.bind("<Enter>", on_enter)
+    proceed_button3.bind("<Leave>", on_leave)
+
+    return category_frame
 
 ############ Category 5 ############
 def display_category5():
