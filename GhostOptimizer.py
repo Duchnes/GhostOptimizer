@@ -294,8 +294,9 @@ category_menu_frame.pack(side=LEFT, fill=Y)
 category_button1 = Button(category_menu_frame, text='Home Page', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button2 = Button(category_menu_frame, text='Optimization', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 category_button3 = Button(category_menu_frame, text='Optimization [PRO]', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
-category_button4 = Button(category_menu_frame, text='Pc Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
-category_button5 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button4 = Button(category_menu_frame, text='Registry Options', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button5 = Button(category_menu_frame, text='Pc Info', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
+category_button6 = Button(category_menu_frame, text='Credits', bg=RGRAY, padx=15, pady=5, bd=0, fg='white', font=("calibri", 10), highlightthickness=0)
 
 # Add Buttons to frame
 category_button1.pack(side=TOP, fill=X, pady=2) 
@@ -303,6 +304,7 @@ category_button2.pack(side=TOP, fill=X, pady=2)
 category_button3.pack(side=TOP, fill=X, pady=2)
 category_button4.pack(side=TOP, fill=X, pady=2)
 category_button5.pack(side=TOP, fill=X, pady=2)
+category_button6.pack(side=TOP, fill=X, pady=2)
 
 
 # Light up buttons
@@ -322,6 +324,8 @@ category_button4.bind('<Enter>', on_enter)
 category_button4.bind('<Leave>', on_leave)
 category_button5.bind('<Enter>', on_enter)
 category_button5.bind('<Leave>', on_leave)
+category_button6.bind('<Enter>', on_enter)
+category_button6.bind('<Leave>', on_leave)
 
 
 # Switch categories
@@ -741,6 +745,7 @@ def display_category3():
 
     return category_frame
 
+
 ############ Category 4 ############
 def display_category4():
     category_frame = Frame(window, bg=DGRAY)
@@ -770,6 +775,33 @@ def display_category4():
 
 ############ Category 5 ############
 def display_category5():
+    category_frame = Frame(window, bg=DGRAY)
+    pc = wmi.WMI()
+    info = f"=========================== OS =========================== \n\n \
+    Name: {platform.platform()}\n \
+    Version: {platform.version()}\n \
+    User Name: {platform.node()}\n\n \
+    =========================== CPU =========================== \n\n \
+    Name: {pc.Win32_Processor()[0].name}\n \
+    Psyhical Cores: {psutil.cpu_count(logical=False)}\n \
+    Total Cores: {psutil.cpu_count(logical=True)}\n\n \
+    =========================== GPU =========================== \n\n \
+    Name: {pc.Win32_VideoController()[0].name}\n\n \
+    =========================== MEMORY =========================== \n\n \
+    Total: {psutil.virtual_memory().total / 1024 / 1024 / 1024:.2f} GB\n \
+    Used: {psutil.virtual_memory().used / 1024 / 1024 / 1024:.2f} GB\n \
+    Avaiable: {psutil.virtual_memory().available / 1024 / 1024 / 1024:.2f} GB\n \
+    "
+    label1 = Label(category_frame, text="Your PC", font=("comfortaa", 40, "bold"), bg=DGRAY, fg='white', anchor="w")
+    label = Label(category_frame, text=info, font=("calibri", 13, "bold"), bg=DGRAY, fg='white', anchor="w")
+    label.pack(pady=20)
+    label1.pack(side='top', anchor=CENTER, pady=10)
+    label.pack(side='bottom', anchor=CENTER, pady=10)
+    return category_frame
+
+
+############ Category 6 ############
+def display_category6():
     category_frame = Frame(window, bg=DGRAY)
     label = Label(category_frame, text='\n\n\n\n\n\n\n\n\n\n\n\nGhostOptimizer\n\nDeveloped by Duchnes\nGitHub: https://github.com/Duchnes\nCountry: Poland\n\nSpecial thanks to the open-source community for their invaluable contributions.\n\n© 2024 GhostOptimizer - All rights reserved.', font=("calibri", 10, "bold"), bg=DGRAY, fg='white', anchor="w")
     label.pack(pady=20)
