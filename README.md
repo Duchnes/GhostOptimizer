@@ -25,6 +25,10 @@ the project is currently being developed.
   - Disable **Windows Get Help**
   - Disable **Microsoft-PPIProjection-Package**
   - Disable **Paint 3D Print**
+- Registry Options
+  - Disable **Power Limits**
+  - Disable **Network Limits**
+  - Disable **Hibernation**
 - Show System info
 
 ## Installation
